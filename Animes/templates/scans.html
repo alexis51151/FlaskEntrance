@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <title>Tresadenn</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="../static/css/scans.css" media="screen">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+<body>
+
+	<nav class="navbar my-navbar navbar-expand-sm ">
+	  <a class="navbar-brand" href="./">Tresadenn</a>
+	  <ul class="navbar-nav">
+		<li class="nav-item">
+		  <a class="nav-link" href="./scans">Scans</a>
+		</li>
+		<li class="nav-item">
+		  <a class="nav-link" href="#">Animés</a>
+		</li>
+		<li class="nav-item">
+		  <a class="nav-link" href="#">Séries</a>
+		</li>
+	  </ul>
+	</nav>
+	
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="card mb-3 box-shadow" id="my-scan">
+							<div class="card-title white text-center">
+								<h5>Todag</h5>
+							</div>
+						<a href="#">
+							<img class="card-img-top" src="../static/images/todag.jpg" >
+							<div class="caption">
+								<div class="text-center">
+									<a  class="btn btn-primary btn-lecture" data-toggle="modal" data-target="#Mod" >Dernier chapitre</a>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="card mb-3 box-shadow" id="my-scan">
+							<div class="card-title white text-center">
+								<h5>Boruto</h5>
+							</div>
+
+						<a href="#">
+							<img class="card-img-top" src="../static/images/boruto.jpg" >
+							<div class="caption">
+								<div class="text-center">
+									<a href="#" class="btn btn-primary btn-lecture">Dernier chapitre</a>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+				{% for scan in scans %}
+				<div class="col-md-3">
+					<div class="card mb-3 box-shadow" id="my-scan">
+							<div class="card-title white text-center">
+								<h5>{{scan.name}}</h5>
+							</div>
+						<a href="#">
+                            {% if scan.url_img %}
+							<img class="card-img-top" src="{{url_for("/static/images/", filename=scan.url_img)}}" >
+                            {% else %}
+                            <img class="card-img-top" src="../static/images/not_found.jpg" >
+                            {% endif %}
+							<div class="caption">
+								<div class="text-center">
+									<a  class="btn btn-primary btn-lecture" data-toggle="modal" data-target="#Mod{{scan.name}}" >Dernier chapitre</a>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+
+                 <!-- Modal linked to this tile!-->
+                <div id="Mod{{scan.name}}" class="modal fade"  tabindex="-1" role="dialog">
+				  <div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLongTitle">{{scan.name}}</h5>
+					  </div>
+					  <div class="modal-body">
+						<form class="form-horizontal" enctype = "multipart/form-data">
+                        <fieldset>
+
+                        <!-- Text input-->
+                        <div class="form-group row">
+                          <label class="col-md-4 control-label" for="title">Titre</label>  
+                          <div class="col-md-4">
+                          <input id="title{{scan.id}}" name="title" type="text" placeholder="{{scan.name}}" class="form-control input-md">
+                            
+                          </div>
+                        </div>
+
+                        <!-- Text input-->
+                        <div class="form-group row">
+                          <label class="col-md-4 control-label" for="chapter">Dernier chapitre lu</label>  
+                          <div class="col-md-4">
+                          <input id="chapter{{scan.id}}" name="chapter" type="text" placeholder="{{scan.chapter}}" class="form-control input-md">
+                            
+                          </div>
+                        </div>
+
+                        <!-- Text input-->
+                        <div class="form-group row">
+                          <label class="col-md-4 control-label" for="link">Lien</label>  
+                          <div class="col-md-4">
+                          <input id="link{{scan.id}}" name="link" type="text" placeholder="{{scan.link}}" class="form-control input-md">
+                          </div>
+                        </div>
+
+                        <!-- File Button --> 
+                        <div class="form-group row">
+                          <label class="col-md-4 control-label" for="image">Image</label>
+                          <div class="col-md-4">
+                            <input id="image{{scan.id}}" name="image" class="input-file" type="file">
+                          </div>
+                        </div>
+
+                        </fieldset>
+                        </form>
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" onclick="submit_form({{scan.id}});" >Save changes</button>
+					  </div>
+					</div>
+				  </div>
+				</div>	
+
+				{% endfor %}
+		
+			</div>
+		</div>
+		
+    {% block script %}
+    <script>
+        function submit_form(id){
+            var title = document.getElementById("title" + id);
+            var chapter = document.getElementById("chapter" + id);
+            var link = document.getElementById("link" + id);
+            var id = id;
+            var entry = {
+                id : id,
+                title: title.value,
+                chapter: chapter.value,
+                link: link.value,
+            };
+                fetch(`${window.origin}/scans`, {
+                  method: "POST",
+                  credentials: "include",
+                  body: JSON.stringify(entry),
+                  cache: "no-cache",
+                  headers: new Headers({
+                    "content-type": "application/json"
+                  })
+                })
+                  .then(function (response) {
+                    if (response.status !== 200) {
+                      console.log(`Looks like there was a problem. Status code: ${response.status}`);
+                      return;
+                    }
+                    response.json().then(function (data) {
+                      console.log(data);
+                    });
+                  })
+                  .catch(function (error) {
+                    console.log("Fetch error: " + error);
+                  });
+                
+            var data = new FormData()
+            var image = $('#image' + id)[0].files[0]
+            data.append('image', image)
+            data.append('id', id)
+               
+             fetch(`${window.origin}/uploader`, {
+              method: "POST",
+              body: data,
+              processData: false,  // tell jQuery not to process the data
+              contentType: false,  // tell jQuery not to set contentType
+            })
+              .then(response => response.json())
+          }
+              
+              
+          
+    </script>
+    
+    {% endblock %}
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

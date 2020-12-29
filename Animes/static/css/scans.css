@@ -1,0 +1,38 @@
+body { 
+  margin:0;
+  padding:0;
+  top:0;
+  background: url(../images/buildings.jpg) no-repeat center fixed; 
+  -webkit-background-size: cover; /* pour anciens Chrome et Safari */
+  background-size: cover; /* version standardisée */
+}
+
+
+
+.my-navbar{
+	background: rgba(0,0,0,0.8);
+}
+
+
+#my-scan {
+	width: 170px;
+	display: block;
+	margin-top: 20px;
+	padding: 10px;
+	background: rgba(0,0,0,0.5);
+
+}
+
+#my-scan img {
+	height: 200px;
+}
+
+.white {
+	color:white;
+}
+
+.btn-lecture {
+	margin-top:8px;
+
+}
+
