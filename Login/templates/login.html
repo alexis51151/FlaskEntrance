@@ -12,15 +12,17 @@
 {% block content %}
     <div class="login-dark">
         <form method="post">
+            {{ form.hidden_tag() }}
             <h2 class="sr-only">Login Form</h2>
             <div class="illustration"><i class="icon ion-ios-locked-outline"></i></div>
-            <!--
-            <div class="form-group"><input class="form-control" type="email" name="email" placeholder="Email"></div>
-            <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
-            <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Log In</button></div><a href="#" class="forgot">Forgot your email or password?</a>
-            -->
             <div class="form-group">{{ form.email(class="form-control", placeholder="Email", type="email") }}</div>
+            {% for error in form.email.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
             <div class="form-group">{{ form.password(class="form-control", placeholder="Password", type="password") }}</div>
+            {% for error in form.password.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
             <div class="form-group">{{ form.submit(class="btn btn-primary btn-block", type="submit") }}</div>
             <a href="{{ url_for('register') }}" class="forgot">Don't have an account? Sign up here</a
         </form>
